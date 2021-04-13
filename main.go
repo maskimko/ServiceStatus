@@ -1,8 +1,8 @@
 package main
 
 import (
-	"./pkg/service"
 	"fmt"
+	"github.com/maskimko/ServiceStatus/pkg/service"
 	"log"
 	"os"
 )
