@@ -5,15 +5,20 @@ import (
 	"github.com/maskimko/ServiceStatus/pkg/service"
 	"log"
 	"os"
+	"runtime"
 )
 
 func main() {
+	if runtime.GOOS != "linux" {
+		log.Fatal("Only GNU/Linux OS is supported")
+	}
 	if len(os.Args) != 3 {
 		log.Fatalf("Usage: %s <service unit name> <start|stop|status>", os.Args[0])
 	}
 	if len(os.Args[1]) == 0 {
 		log.Fatalf("You must provide a service unit name\nUsage: %s <service unit name> <start|stop|status>", os.Args[0])
 	}
+
 	srv := service.NewDefaultService(os.Args[1])
 	switch os.Args[2] {
 	case "start":
