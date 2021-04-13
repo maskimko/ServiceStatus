@@ -1,4 +1,4 @@
-package ServiceStatus
+package main
 
 import (
 	"./pkg/service"
