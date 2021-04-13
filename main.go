@@ -22,7 +22,15 @@ func main() {
 	srv := service.NewDefaultService(os.Args[1])
 	switch os.Args[2] {
 	case "start":
+		err := srv.Start()
+		if err != nil {
+			log.Fatalf("Failed to start service %s Error: %s", srv.Name, err.Error())
+		}
 	case "stop":
+		err := srv.Stop()
+		if err != nil {
+			log.Fatalf("Failed to stop service %s Error: %s", srv.Name, err.Error())
+		}
 	case "status":
 		status, err := srv.Status()
 		if err != nil {

@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os/exec"
 	"strconv"
 	"strings"
+	"syscall"
 )
 
 const systemctl = "systemctl"
@@ -34,26 +36,32 @@ func (ds *DefaultService) Stop() error {
 func (ds *DefaultService) Status() (*Status, error) {
 	active, err := ds.getIsActive()
 	if err != nil {
+		log.Print("Failed to check active state")
 		return nil, err
 	}
 	running, err := ds.getIsRunning()
 	if err != nil {
+		log.Print("Failed to check running state")
 		return nil, err
 	}
 	enabled, err := ds.getIsEnabled()
 	if err != nil {
+		log.Print("Failed to check enabled state")
 		return nil, err
 	}
 	loaded, err := ds.getIsLoaded()
 	if err != nil {
+		log.Print("Failed to check loaded state")
 		return nil, err
 	}
 	pid, err := ds.getMainPid()
 	if err != nil {
+		log.Print("Failed to check main pid")
 		return nil, err
 	}
 	text, err := ds.getStatusText()
 	if err != nil {
+		log.Print("Failed to read status info")
 		return nil, err
 	}
 	status := Status{
@@ -116,7 +124,7 @@ func (ds *DefaultService) getIsEnabled() (bool, error) {
 }
 
 func (ds *DefaultService) getMainPid() (*PID, error) {
-	value, err := ds.showParam("UnitFileState")
+	value, err := ds.showParam("MainPID")
 	if err != nil {
 		return nil, err
 	}
@@ -129,15 +137,21 @@ func (ds *DefaultService) getMainPid() (*PID, error) {
 
 func (ds *DefaultService) showParam(param string) (string, error) {
 	var buf bytes.Buffer
+	var errBuf bytes.Buffer
 	cmd := exec.Command(systemctl, "show", ds.Name, "-p", param, "--value")
 	cmd.Stdout = &buf
+	cmd.Stderr = &errBuf
 	err := cmd.Run()
 	if err != nil {
 		return "", err
 	}
 	state, err := ioutil.ReadAll(&buf)
 	if err != nil {
-		return "", err
+		sErrOut, e := ioutil.ReadAll(&errBuf)
+		if e != nil {
+			return "", err
+		}
+		return "", fmt.Errorf("%w stderr: %s", string(sErrOut))
 	}
 	return strings.ToLower(strings.TrimSpace(string(state))), nil
 }
@@ -148,7 +162,17 @@ func (ds *DefaultService) getStatusText() (string, error) {
 	cmd.Stdout = &buf
 	err := cmd.Run()
 	if err != nil {
-		return "", err
+		var canProceed = false
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+				if status.ExitStatus() == 3 {
+					canProceed = true
+				}
+			}
+		}
+		if !canProceed {
+			return "", err
+		}
 	}
 	status, err := ioutil.ReadAll(&buf)
 	if err != nil {
