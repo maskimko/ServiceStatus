@@ -13,26 +13,32 @@ import (
 
 const systemctl = "systemctl"
 
+// NewDefaultService returns an instance associated with some systemd service unit
 func NewDefaultService(name string) *DefaultService {
 	return &DefaultService{Name: name}
 }
 
+// DefaultService is a default implementation of the Service interface
 type DefaultService struct {
+	// Name is a name of the systemd unit of type service
 	Name string
 }
 
+// Start starts the service (launches process)
 func (ds *DefaultService) Start() error {
 	cmd := exec.Command(systemctl, "start", ds.Name)
 	err := cmd.Run()
 	return err
 }
 
+// Stop stops the service (terminates process)
 func (ds *DefaultService) Stop() error {
 	cmd := exec.Command(systemctl, "stop", ds.getServiceUnitName())
 	err := cmd.Run()
 	return err
 }
 
+// Status method return a Status object, and error if i is impossible to build up the status object
 func (ds *DefaultService) Status() (*Status, error) {
 	active, err := ds.getIsActive()
 	if err != nil {
@@ -75,10 +81,12 @@ func (ds *DefaultService) Status() (*Status, error) {
 	return &status, nil
 }
 
+// getServiceUnitName formats the service name by appending .service suffix
 func (ds *DefaultService) getServiceUnitName() string {
 	return fmt.Sprintf("%s.service", ds.Name)
 }
 
+// getIsRunning queries if service is running
 func (ds *DefaultService) getIsRunning() (bool, error) {
 	value, err := ds.showParam("SubState")
 	if err != nil {
@@ -90,6 +98,7 @@ func (ds *DefaultService) getIsRunning() (bool, error) {
 	return false, nil
 }
 
+// getIsActive queries if service is active
 func (ds *DefaultService) getIsActive() (bool, error) {
 	value, err := ds.showParam("ActiveState")
 	if err != nil {
@@ -101,6 +110,7 @@ func (ds *DefaultService) getIsActive() (bool, error) {
 	return false, nil
 }
 
+// getIsLoaded queries if service is loaded
 func (ds *DefaultService) getIsLoaded() (bool, error) {
 	value, err := ds.showParam("LoadState")
 	if err != nil {
@@ -112,6 +122,7 @@ func (ds *DefaultService) getIsLoaded() (bool, error) {
 	return false, nil
 }
 
+// getIsEnabled queries if service is enabled
 func (ds *DefaultService) getIsEnabled() (bool, error) {
 	value, err := ds.showParam("UnitFileState")
 	if err != nil {
@@ -123,6 +134,7 @@ func (ds *DefaultService) getIsEnabled() (bool, error) {
 	return false, nil
 }
 
+// getMainPid obtains the linux process id of the given service
 func (ds *DefaultService) getMainPid() (*PID, error) {
 	value, err := ds.showParam("MainPID")
 	if err != nil {
@@ -136,6 +148,7 @@ func (ds *DefaultService) getMainPid() (*PID, error) {
 	return mainPid, err
 }
 
+// showParam function is a helper function which queries given systemctl unit parameters
 func (ds *DefaultService) showParam(param string) (string, error) {
 	var buf bytes.Buffer
 	var errBuf bytes.Buffer
@@ -157,6 +170,7 @@ func (ds *DefaultService) showParam(param string) (string, error) {
 	return strings.ToLower(strings.TrimSpace(string(state))), nil
 }
 
+// getStatusText function returns the systemctl status output of the given service unit
 func (ds *DefaultService) getStatusText() (string, error) {
 	var buf bytes.Buffer
 	cmd := exec.Command(systemctl, "status", ds.Name)
