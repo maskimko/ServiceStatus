@@ -132,7 +132,8 @@ func (ds *DefaultService) getMainPid() (*PID, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &PID{Id: pid}, nil
+	mainPid, err := NewPid(pid)
+	return mainPid, err
 }
 
 func (ds *DefaultService) showParam(param string) (string, error) {

@@ -22,6 +22,6 @@ func (s *Status) String() string {
 		"Running: %t\n"+
 		"Loaded: %t\n"+
 		"Enabled: %t\n"+
-		"Main PID: %s\n"+
+		"Main PID:\n%s\n"+
 		"Status text:\n%s", s.IsActive, s.IsRunning, s.IsLoaded, s.IsEnabled, s.MainPID.String(), s.text)
 }

@@ -10,6 +10,7 @@ import (
 
 type PID struct {
 	Id       int
+	Cmd      string
 	Children []PID
 }
 
@@ -18,18 +19,28 @@ func NewPid(pid int) (*PID, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	p := &PID{Id: pid}
-	err = getChildren(p, tree)
-	if err != nil {
-		return p, err
+	if pid > 0 {
+		p.Cmd = tree.Procs[pid].Name
+		err = getChildren(p, tree)
+		if err != nil {
+			return p, err
+		}
 	}
 	return p, nil
 }
 
 func newPid(pid int, tree *pstree.Tree) (*PID, error) {
 	p := &PID{Id: pid}
-	err := getChildren(p, tree)
-	return nil, err
+	if pid > 0 {
+		p.Cmd = tree.Procs[pid].Name
+		err := getChildren(p, tree)
+		if err != nil {
+			return p, err
+		}
+	}
+	return p, nil
 }
 
 func getChildren(pid *PID, tree *pstree.Tree) error {
@@ -44,16 +55,18 @@ func getChildren(pid *PID, tree *pstree.Tree) error {
 }
 
 func (p *PID) String() string {
+	if p.Id == 0 {
+		return "process is not running"
+	}
 	var buf bytes.Buffer
-	buf.WriteString(fmt.Sprintf("PID: %d\n", p.Id))
-	getString(p, 1, &buf)
+	getString(p, 0, &buf)
 	return buf.String()
 }
 
-func getString(p *PID, indent int, buf io.StringWriter) {
+func getString(p *PID, indent int, buf io.Writer) {
 	str := strings.Repeat("  ", indent)
+	_, _ = buf.Write([]byte(fmt.Sprintf("%s%d %s\n", str, p.Id, p.Cmd)))
 	for _, c := range p.Children {
-		_, _ = buf.WriteString(fmt.Sprintf("%s%#v\n", str, c))
 		getString(&c, indent+1, buf)
 	}
 }
