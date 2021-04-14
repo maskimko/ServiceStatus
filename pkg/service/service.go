@@ -22,11 +22,6 @@ func (s *Status) String() string {
 		"Running: %t\n"+
 		"Loaded: %t\n"+
 		"Enabled: %t\n"+
-		"Main PID: %d\n"+
-		"Status text:\n%s", s.IsActive, s.IsRunning, s.IsLoaded, s.IsEnabled, s.MainPID, s.text)
-}
-
-type PID struct {
-	Id       int
-	Children []PID
+		"Main PID: %s\n"+
+		"Status text:\n%s", s.IsActive, s.IsRunning, s.IsLoaded, s.IsEnabled, s.MainPID.String(), s.text)
 }
