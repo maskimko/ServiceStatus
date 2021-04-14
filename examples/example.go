@@ -24,7 +24,7 @@ func GetSpawnedPIDs(serviceName string) ([]int, error) {
 	}
 	var spawnedPIDs []int
 	for _, p := range status.MainPID.Children {
-		spawnedPIDs = append(spawnedPIDs, p.Id)
+		spawnedPIDs = append(spawnedPIDs, p.ID)
 	}
 	return spawnedPIDs, nil
 }

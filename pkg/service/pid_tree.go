@@ -11,7 +11,7 @@ import (
 // PID is a class for holding linux process id, executable name of this process
 // and information about spawned sub-processes
 type PID struct {
-	Id       int
+	ID       int
 	Cmd      string
 	Children []PID
 }
@@ -23,7 +23,7 @@ func NewPid(pid int) (*PID, error) {
 		return nil, err
 	}
 
-	p := &PID{Id: pid}
+	p := &PID{ID: pid}
 	if pid > 0 {
 		p.Cmd = tree.Procs[pid].Name
 		err = getChildren(p, tree)
@@ -36,7 +36,7 @@ func NewPid(pid int) (*PID, error) {
 
 // newPid private function returns a new PID instance and reuses a tree object. It also constructs the processes tree
 func newPid(pid int, tree *pstree.Tree) (*PID, error) {
-	p := &PID{Id: pid}
+	p := &PID{ID: pid}
 	if pid > 0 {
 		p.Cmd = tree.Procs[pid].Name
 		err := getChildren(p, tree)
@@ -49,7 +49,7 @@ func newPid(pid int, tree *pstree.Tree) (*PID, error) {
 
 // getChildren function together with newPid recursively builds the processes tree
 func getChildren(pid *PID, tree *pstree.Tree) error {
-	for _, cid := range tree.Procs[pid.Id].Children {
+	for _, cid := range tree.Procs[pid.ID].Children {
 		child, err := newPid(cid, tree)
 		if err != nil {
 			return err
@@ -61,7 +61,7 @@ func getChildren(pid *PID, tree *pstree.Tree) error {
 
 // String method return a string representation of the PID object
 func (p *PID) String() string {
-	if p.Id == 0 {
+	if p.ID == 0 {
 		return "process is not running"
 	}
 	var buf bytes.Buffer
@@ -72,7 +72,7 @@ func (p *PID) String() string {
 // getString function recursively builds a string representation of the PID object, by walking the process tree
 func getString(p *PID, indent int, buf io.Writer) {
 	str := strings.Repeat("  ", indent)
-	_, _ = buf.Write([]byte(fmt.Sprintf("%s%d %s\n", str, p.Id, p.Cmd)))
+	_, _ = buf.Write([]byte(fmt.Sprintf("%s%d %s\n", str, p.ID, p.Cmd)))
 	for _, c := range p.Children {
 		getString(&c, indent+1, buf)
 	}
