@@ -12,7 +12,7 @@ It allows _starting_, _stopping_ and _querying service status_
 
 _main.go_ file introduces a CLI interface to this wrapper
 
->Usage: ServiceStatus <service unit name> <start|stop|status>
+>Usage: ServiceStatus <service_unit_name> <start|stop|status>
 
 
 ## Examples:
