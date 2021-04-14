@@ -1,5 +1,6 @@
 ServiceStatus
 ========
+[![Go Report Card](https://goreportcard.com/badge/github.com/maskimko/ServiceStatus)](https://goreportcard.com/report/github.com/maskimko/ServiceStatus)
 
 About
 -----
