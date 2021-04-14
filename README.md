@@ -1,9 +1,9 @@
-ServiceStatus
-========
+# ServiceStatus
+
 [![Go Report Card](https://goreportcard.com/badge/github.com/maskimko/ServiceStatus)](https://goreportcard.com/report/github.com/maskimko/ServiceStatus)
 
-About
------
+## About
+
 
 *ServiceStatus* is a simple and small Go library 
 which wraps some basic control function of linux systemd units of type service
@@ -15,10 +15,10 @@ _main.go_ file introduces a CLI interface to this wrapper
 >Usage: ServiceStatus <service unit name> <start|stop|status>
 
 
-Examples:
-----
+## Examples:
 
-###CLI:
+
+### CLI:
 ```$ ServiceStatus NetworkManager status
 Service unit NetworkManager status:
 Active: true
@@ -42,7 +42,7 @@ CGroup: /system.slice/NetworkManager.service
 └─1499 /sbin/dhclient -d -q -sf /usr/lib/NetworkManager/nm-dhcp-helper -pf /run/dhclient-enp0s3.pid -lf /var/lib/NetworkManager/dhclient-7473cee9-ad3c-476f-ab76-62148a8bec54-enp0s3.lease -cf /var/lib/NetworkManager/dhclient-enp0s3.conf enp0s3
 ```
 
-###Golang
+### Golang
 ```go
 
 import "github.com/maskimko/ServiceStatus/pkg/service"
