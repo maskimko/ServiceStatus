@@ -2,34 +2,34 @@ package service
 
 import "fmt"
 
-// Service is a representation of a Linux systemd unit of type service
+//Service is a representation of a Linux systemd unit of type service
 type Service interface {
-	// Start starts the service (launches process)
+	//Start starts the service (launches process)
 	Start() error
-	// Stop stops the service (terminates process)
+	//Stop stops the service (terminates process)
 	Stop() error
-	// Status method return a Status object, and error if i is impossible to build up the status object
+	//Status method return a Status object, and error if i is impossible to build up the status object
 	Status() (*Status, error)
 }
 
-// Status type holds the most commonly used data about systemd service unit status
+//Status type holds the most commonly used data about systemd service unit status
 type Status struct {
-	// IsActive is true if the service is active
+	//IsActive is true if the service is active
 	IsActive bool
-	// IsRunning is true if the service is running
+	//IsRunning is true if the service is running
 	IsRunning bool
-	// IsLoaded is true if the service is loaded
+	//IsLoaded is true if the service is loaded
 	IsLoaded bool
-	// IsEnabled is true if the service is enabled
+	//IsEnabled is true if the service is enabled
 	IsEnabled bool
-	// MainPID is an object which holds a pid of main service process
-	// and some information about executable name and its children
+	//MainPID is an object which holds a pid of main service process
+	//and some information about executable name and its children
 	MainPID PID
-	// text field holds original systemctl status answer
+	//text field holds original systemctl status answer
 	text string
 }
 
-// String method return a string representation of the PID object
+//String method return a string representation of the PID object
 func (s *Status) String() string {
 	return fmt.Sprintf("Active: %t\n"+
 		"Running: %t\n"+

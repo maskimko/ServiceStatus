@@ -8,15 +8,15 @@ import (
 	"strings"
 )
 
-// PID is a class for holding linux process id, executable name of this process
-// and information about spawned sub-processes
+//PID is a class for holding linux process id, executable name of this process
+//and information about spawned sub-processes
 type PID struct {
 	ID       int
 	Cmd      string
 	Children []PID
 }
 
-// NewPid function returns a new PID instance. It also constructs the processes tree
+//NewPid function returns a new PID instance. It also constructs the processes tree
 func NewPid(pid int) (*PID, error) {
 	tree, err := pstree.New()
 	if err != nil {
@@ -34,7 +34,7 @@ func NewPid(pid int) (*PID, error) {
 	return p, nil
 }
 
-// newPid private function returns a new PID instance and reuses a tree object. It also constructs the processes tree
+//newPid private function returns a new PID instance and reuses a tree object. It also constructs the processes tree
 func newPid(pid int, tree *pstree.Tree) (*PID, error) {
 	p := &PID{ID: pid}
 	if pid > 0 {
@@ -47,7 +47,7 @@ func newPid(pid int, tree *pstree.Tree) (*PID, error) {
 	return p, nil
 }
 
-// getChildren function together with newPid recursively builds the processes tree
+//getChildren function together with newPid recursively builds the processes tree
 func getChildren(pid *PID, tree *pstree.Tree) error {
 	for _, cid := range tree.Procs[pid.ID].Children {
 		child, err := newPid(cid, tree)
@@ -59,7 +59,7 @@ func getChildren(pid *PID, tree *pstree.Tree) error {
 	return nil
 }
 
-// String method return a string representation of the PID object
+//String method return a string representation of the PID object
 func (p *PID) String() string {
 	if p.ID == 0 {
 		return "process is not running"
@@ -69,7 +69,7 @@ func (p *PID) String() string {
 	return buf.String()
 }
 
-// getString function recursively builds a string representation of the PID object, by walking the process tree
+//getString function recursively builds a string representation of the PID object, by walking the process tree
 func getString(p *PID, indent int, buf io.Writer) {
 	str := strings.Repeat("  ", indent)
 	_, _ = buf.Write([]byte(fmt.Sprintf("%s%d %s\n", str, p.ID, p.Cmd)))
