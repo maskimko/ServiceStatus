@@ -1,6 +1,7 @@
 # ServiceStatus
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/maskimko/ServiceStatus)](https://goreportcard.com/report/github.com/maskimko/ServiceStatus)
+[![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](https://godoc.org/github.com/maskimko/ServiceStatus)
 
 ## About
 
